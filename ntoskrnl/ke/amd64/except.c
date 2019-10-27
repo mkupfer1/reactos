@@ -147,8 +147,8 @@ KiDispatchExceptionToUser(
     _SEH2_END;
 
     /* Now set the two params for the user-mode dispatcher */
-    TrapFrame->Rcx = (ULONG64)&UserStack->Context;
-    TrapFrame->Rdx = (ULONG64)&UserStack->ExceptionRecord;
+    TrapFrame->Rcx = (ULONG64)&UserStack->ExceptionRecord;
+    TrapFrame->Rdx = (ULONG64)&UserStack->Context;
 
     /* Set new Stack Pointer */
     TrapFrame->Rsp = UserRsp;
