@@ -174,7 +174,7 @@ AddSelectedUsersToGroup(HWND hwndDlg,
                                  szUserName,
                                  UNLEN);
 
-            DebugPrintf(_TEXT("Selected user: %s"), szUserName);
+            //DebugPrintf(_TEXT("Selected user: %s"), szUserName);
 
             memberInfo.lgrmi3_domainandname = szUserName;
 

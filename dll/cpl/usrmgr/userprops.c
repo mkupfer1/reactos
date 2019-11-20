@@ -476,7 +476,7 @@ AddSelectedGroupsToUser(HWND hwndDlg,
                                                  (LPBYTE)&memberInfo, 1);
                 if (status == NERR_Success)
                 {
-                    DebugPrintf(_TEXT("Selected group: %s"), szGroupName);
+                    //DebugPrintf(_TEXT("Selected group: %s"), szGroupName);
                     bResult = TRUE;
                 }
                 else
