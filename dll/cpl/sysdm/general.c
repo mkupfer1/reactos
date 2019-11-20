@@ -595,7 +595,7 @@ ULONGLONG GetSeconds(VOID)
     return Ticks64;
 }
 
-VOID GetSystemUptime(HWND hwnd)
+BOOL GetSystemUptime(HWND hwnd)
 {
     HWND hRosUptime;
     WCHAR szBuf[64], szStr[64];
@@ -604,11 +604,11 @@ VOID GetSystemUptime(HWND hwnd)
     hRosUptime = GetDlgItem(hwnd, IDC_UPTIME);
     if (!hRosUptime)
     {
-        return;
+        return FALSE;
     }
     if (!LoadStringW(hApplet, IDS_UPTIME_FORMAT, szStr, _countof(szStr)))
     {
-        return;
+        return FALSE;
     }
     cSeconds = GetSeconds();
     StringCchPrintfW(szBuf, _countof(szBuf), szStr,
@@ -618,11 +618,13 @@ VOID GetSystemUptime(HWND hwnd)
                      cSeconds % 60);
 
     SetWindowTextW(hRosUptime, szBuf);
+    return TRUE;
 }
 
 /* Property page dialog callback */
 INT_PTR CALLBACK GeneralPageProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    static UINT uptime_timerid = 0;
     UNREFERENCED_PARAMETER(lParam);
     UNREFERENCED_PARAMETER(wParam);
 
@@ -640,10 +642,21 @@ INT_PTR CALLBACK GeneralPageProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM 
             SetWindowLongPtr(GetDlgItem(hwndDlg, IDC_ROSIMG), GWLP_WNDPROC, (LONG_PTR)RosImageProc);
             GetSystemInformation(hwndDlg);
             GetSystemVersion(hwndDlg);
+            if (GetSystemUptime(hwndDlg))
+            {
+                uptime_timerid = SetTimer(hwndDlg, 1, 1000, NULL);
+            }
+            break;
+
+	case WM_TIMER:
             GetSystemUptime(hwndDlg);
             break;
 
         case WM_DESTROY:
+            if (uptime_timerid)
+            {
+                KillTimer(hwndDlg, uptime_timerid);
+            }
             HeapFree(GetProcessHeap(), 0, pImgInfo);
             break;
 
